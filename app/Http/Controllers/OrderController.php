@@ -26,7 +26,7 @@ class OrderController extends Controller
     public function create()
     {
         //
-        return view('order');
+        return view('order.order');
     }
 
     /**
@@ -43,14 +43,17 @@ class OrderController extends Controller
             'deliver_method' => 'required',
         ]);
 
-        $order = $request->user()->orders()->create([
-            'quantity' => $request->quantity,
-            'deliver_method'=>$request->deliver_method,
-            'date'=>$request->date,
-        ]);
+        if($request->user()){
+            $order = $request->user()->orders()->create([
+                'quantity' => $request->quantity,
+                'deliver_method'=>$request->deliver_method,
+                'date'=>$request->date,
+            ]);
 
-        return redirect("/order/".$order->id);
-
+            return redirect("/order/".$order->id);
+        }else{
+            echo 'no login user';
+        }
     }
 
     /**
@@ -62,16 +65,8 @@ class OrderController extends Controller
     public function show($id)
     {
         $order = \App\Order::find($id);
-        
-        echo $order->quantity;
 
-        echo $order->deliver_method;
-
-        echo $order->date;
-
-        echo $order->user->name;
-
-        echo $order->user->email;
+         return view('order.show')->with('order',$order);
     }
 
     /**
